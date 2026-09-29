@@ -30,6 +30,8 @@ from modules.object_detection import (
     CAT_SCENE,
 )
 
+from modules.tts_engine import speak_text
+
 # Set up logging format
 logging.basicConfig(
     level=logging.INFO,
@@ -63,13 +65,22 @@ class AssistVoiceManager:
 
             if is_close_hazard:
                 last_time = self.last_hazard_times.get(msg, 0.0)
+
                 if now - last_time >= self.hazard_cooldown:
                     print(f"\n[!!! PROXIMITY HAZARD ALERT !!!] >>> {msg} <<<")
+
+                    speak_text(msg, priority=1)
+
                     self.last_hazard_times[msg] = now
+
             elif is_text_event:
                 last_time = self.last_text_times.get(msg, 0.0)
+
                 if now - last_time >= self.text_cooldown:
                     print(f"[OCR VOICE ASSIST] >>> {msg} <<<")
+
+                    speak_text(msg, priority=2)
+
                     self.last_text_times[msg] = now
 
 
